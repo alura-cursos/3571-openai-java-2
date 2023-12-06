@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMart - Chatbot</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body>
+    <header class="cabecalho container">
+        <img src="/img/logo-chatbot.svg" alt="Logo Chatbot">
+
+        <div class="cabecalho__acoes">
+            <a href="#" th:href="@{/chat/limpar}" id="botao-limpar-conversa">Limpar Conversa</a>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="chat container" id="chat">
+            <p class="chat__bolha chat__bolha--bot">
+                Olá! Eu sou o assistente virtual da EcoMart ~<br/><br/>
+                Como posso te ajudar?
+            </p>
+            <p th:each="mensagem,status : ${historico}" th:text="${mensagem}" th:class="'chat\_\_bolha ' + ${status.even ? 'chat\_\_bolha--bot' : 'chat\_\_bolha--usuario'}"></p><br/><br/>
+        </section>
+
+        <section class="entrada container">
+            <div class="entrada__container">
+                <input type="text" class="entrada__input" placeholder="Enviar uma mensagem" id="input">
+                <button aria-label="Botão de enviar" id="botao-enviar">
+                    <i class="icone icone--enviar-mensagem"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
