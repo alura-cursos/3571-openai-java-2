@@ -25,4 +25,7 @@ public class ChatbotService {
         return client.carregarHistoricoDeMensagens();
     }
 
+    public void limparHistorico() {
+        client.apagarThread();
+    }
 }
