@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class OpenAIClient {
@@ -69,6 +72,24 @@ public class OpenAIClient {
                 .findFirst().get().getContent().get(0).getText().getValue();
 
         return respostaAssistente;
+    }
+
+    public List<String> carregarHistoricoDeMensagens() {
+        var mensagens = new ArrayList<String>();
+
+        if (this.threadId != null) {
+            mensagens.addAll(
+                    service
+                            .listMessages(this.threadId)
+                            .getData()
+                            .stream()
+                            .sorted(Comparator.comparingInt(Message::getCreatedAt))
+                            .map(m -> m.getContent().get(0).getText().getValue())
+                            .collect(Collectors.toList())
+            );
+        }
+
+        return mensagens;
     }
 
 }
