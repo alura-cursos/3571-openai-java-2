@@ -69,7 +69,8 @@ public class OpenAIClient {
                 .getData()
                 .stream()
                 .sorted(Comparator.comparingInt(Message::getCreatedAt).reversed())
-                .findFirst().get().getContent().get(0).getText().getValue();
+                .findFirst().get().getContent().get(0).getText()
+                .getValue().replaceAll("\\\u3010.*?\\\u3011", "");
 
         return respostaAssistente;
     }
