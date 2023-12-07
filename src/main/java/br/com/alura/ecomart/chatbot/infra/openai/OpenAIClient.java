@@ -1,10 +1,12 @@
 package br.com.alura.ecomart.chatbot.infra.openai;
 
 import com.theokanning.openai.OpenAiHttpException;
+import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,7 @@ public class OpenAIClient {
         this.service = new OpenAiService(apiKey, Duration.ofSeconds(60));
     }
 
-    public String enviarRequisicaoChatCompletion(DadosRequisicaoChatCompletion dados) {
+    public Flowable<ChatCompletionChunk> enviarRequisicaoChatCompletion(DadosRequisicaoChatCompletion dados) {
         var request = ChatCompletionRequest
                 .builder()
                 .model("gpt-4-1106-preview")
@@ -33,16 +35,14 @@ public class OpenAIClient {
                         new ChatMessage(
                                 ChatMessageRole.USER.value(),
                                 dados.promptUsuario())))
+                .stream(true)
                 .build();
 
         var segundosParaProximaTentiva = 5;
         var tentativas = 0;
         while (tentativas++ != 5) {
             try {
-                return service
-                        .createChatCompletion(request)
-                        .getChoices().get(0)
-                        .getMessage().getContent();
+                return service.streamChatCompletion(request);
             } catch (OpenAiHttpException ex) {
                 var errorCode = ex.statusCode;
                 switch (errorCode) {
